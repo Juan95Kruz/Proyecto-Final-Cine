@@ -1430,7 +1430,7 @@ function displayEntradas() {
 
         // Opciones para el select de funciones
         const funcionOptions = funciones.map(funcion =>
-            `<option value="${funcion.id}" ${entrada.funcion && funcion.id === entrada.funcion.id ? 'selected' : ''}>
+            `<option value="${funcion.id}" ${entrada.funcion && String(funcion.id) === String(entrada.funcion.id) ? 'selected' : ''}>
                 ${funcion.pelicula ? funcion.pelicula.titulo : 'Sin película'} - Sala ${funcion.sala ? funcion.sala.numero : ''} - ${funcion.horario}
             </option>`
         ).join('');
