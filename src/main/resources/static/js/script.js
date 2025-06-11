@@ -1427,20 +1427,95 @@ function displayEntradas() {
         const funcionInfo = entrada.funcion ?
             `${entrada.funcion.pelicula ? entrada.funcion.pelicula.titulo : 'Sin película'} - ${entrada.funcion.horario}` :
             'Sin asignar';
+
+        // Opciones para el select de funciones
+        const funcionOptions = funciones.map(funcion =>
+            `<option value="${funcion.id}" ${entrada.funcion && funcion.id === entrada.funcion.id ? 'selected' : ''}>
+                ${funcion.pelicula ? funcion.pelicula.titulo : 'Sin película'} - Sala ${funcion.sala ? funcion.sala.numero : ''} - ${funcion.horario}
+            </option>`
+        ).join('');
+
         const row = `
-            <tr>
+            <tr id="entrada-row-${entrada.id}">
                 <td>${entrada.id}</td>
-                <td>${entrada.precio}</td>
-                <td>${entrada.asiento}</td>
-                <td>${funcionInfo}</td>
                 <td>
-                    <button class="btn btn-secondary" onclick="editEntrada(${entrada.id})">Editar</button>
-                    <button class="btn btn-danger" onclick="deleteEntrada(${entrada.id})">Eliminar</button>
+                    <span class="display-mode" id="entrada-precio-display-${entrada.id}">${entrada.precio}</span>
+                    <input type="number" class="edit-mode form-control" id="entrada-precio-edit-${entrada.id}" value="${entrada.precio}" style="display:none;">
+                </td>
+                <td>
+                    <span class="display-mode" id="entrada-asiento-display-${entrada.id}">${entrada.asiento}</span>
+                    <input type="text" class="edit-mode form-control" id="entrada-asiento-edit-${entrada.id}" value="${entrada.asiento}" style="display:none;">
+                </td>
+                <td>
+                    <span class="display-mode" id="entrada-funcion-display-${entrada.id}">${funcionInfo}</span>
+                    <select class="edit-mode form-control" id="entrada-funcion-edit-${entrada.id}" style="display:none;">
+                        <option value="">Seleccionar función</option>
+                        ${funcionOptions}
+                    </select>
+                </td>
+                <td>
+                    <div class="display-mode" id="entrada-actions-display-${entrada.id}">
+                        <button class="btn btn-secondary btn-sm" onclick="enableEditEntrada(${entrada.id})">Editar</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteEntrada(${entrada.id})">Eliminar</button>
+                    </div>
+                    <div class="edit-mode" id="entrada-actions-edit-${entrada.id}" style="display:none;">
+                        <button class="btn btn-success btn-sm" onclick="saveEditEntrada(${entrada.id})">Guardar</button>
+                        <button class="btn btn-secondary btn-sm" onclick="cancelEditEntrada(${entrada.id})">Cancelar</button>
+                    </div>
                 </td>
             </tr>
         `;
         tbody.innerHTML += row;
     });
+}
+
+function enableEditEntrada(id) {
+    document.querySelectorAll(`#entrada-row-${id} .display-mode`).forEach(el => el.style.display = 'none');
+    document.querySelectorAll(`#entrada-row-${id} .edit-mode`).forEach(el => el.style.display = 'block');
+}
+
+function cancelEditEntrada(id) {
+    const entrada = entradas.find(e => e.id === id);
+    if (entrada) {
+        document.getElementById(`entrada-precio-edit-${id}`).value = entrada.precio;
+        document.getElementById(`entrada-asiento-edit-${id}`).value = entrada.asiento;
+        document.getElementById(`entrada-funcion-edit-${id}`).value = entrada.funcion ? entrada.funcion.id : '';
+    }
+    document.querySelectorAll(`#entrada-row-${id} .display-mode`).forEach(el => el.style.display = 'block');
+    document.querySelectorAll(`#entrada-row-${id} .edit-mode`).forEach(el => el.style.display = 'none');
+}
+
+async function saveEditEntrada(id) {
+    const precio = document.getElementById(`entrada-precio-edit-${id}`).value;
+    const asiento = document.getElementById(`entrada-asiento-edit-${id}`).value;
+    const funcionId = document.getElementById(`entrada-funcion-edit-${id}`).value;
+
+    if (!precio || !asiento || !funcionId) {
+        showAlert('entradaAlert', 'Todos los campos son obligatorios', 'error');
+        return;
+    }
+
+    const entradaData = {
+        precio: parseFloat(precio),
+        asiento: asiento,
+        funcion: { id: parseInt(funcionId) }
+    };
+
+    try {
+        await makeRequest(`/api/v1/entradas/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(entradaData)
+        });
+        showAlert('entradaAlert', 'Entrada actualizada exitosamente');
+        await loadEntradas();
+    } catch (error) {
+        let errorMessage = error.message;
+        if (errorMessage.includes('409')) {
+            errorMessage = 'El asiento ya está ocupado para esta función';
+        }
+        showAlert('entradaAlert', 'Error: ' + errorMessage, 'error');
+    }
 }
 
 document.getElementById('entradaForm')?.addEventListener('submit', async (e) => {
