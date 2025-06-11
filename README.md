@@ -235,7 +235,7 @@ La aplicación ofrece **operaciones CRUD completas** para todas las entidades:
 - **Cine** → **Sala**: Relación One-to-Many
 - **Cine** → **Película**: Relación One-to-Many  
 - **Sala** → **Función**: Relación One-to-Many
-- **Película** → **Función**: Relación One-to-Many
+- **Función** → **Película**: Relación Many-to-One
 - **Función** → **Entrada**: Relación One-to-Many
 
 ## 🔍 Características Técnicas
