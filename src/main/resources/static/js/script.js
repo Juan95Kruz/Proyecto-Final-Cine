@@ -1509,6 +1509,7 @@ async function saveEditEntrada(id) {
         });
         showAlert('entradaAlert', 'Entrada actualizada exitosamente');
         await loadEntradas();
+        clearEntradaForm();
     } catch (error) {
         let errorMessage = error.message;
         if (errorMessage.includes('409')) {
@@ -1518,21 +1519,6 @@ async function saveEditEntrada(id) {
     }
 }
 
-async function saveEditEntrada(id) {
-    // ...código de validación y PUT...
-    try {
-        await makeRequest(`/api/v1/entradas/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(entradaData)
-        });
-        showAlert('entradaAlert', 'Entrada actualizada exitosamente');
-        await loadEntradas();
-        clearEntradaForm(); // <-- Agrega esto aquí
-    } catch (error) {
-        // ...manejo de errores...
-    }
-}
 
 document.getElementById('entradaForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
