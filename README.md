@@ -36,9 +36,8 @@ Este proyecto es una aplicación web para la gestión integral de una cadena de 
 
 ## Requisitos
 
-- Java 17+ (o la versión que uses en tu proyecto)
+- Java 21 
 - MySQL (con la base de datos `db_cines` creada)
-- Node.js (opcional, solo si quieres usar herramientas de desarrollo frontend)
 - Navegador web moderno
 
 ---
