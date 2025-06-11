@@ -46,8 +46,8 @@ Este proyecto es una aplicación web para la gestión integral de una cadena de 
 
 1. **Clona el repositorio:**
    ```bash
-   git clone https://github.com/tu-usuario/tu-repo.git
-   cd tu-repo
+   git clone https://github.com/Juan95Kruz/Proyecto-Final-Cine.git
+   cd Proyecto-Final-Cine
    ```
 
 2. **Configura la base de datos:**
@@ -55,7 +55,7 @@ Este proyecto es una aplicación web para la gestión integral de una cadena de 
    - Ajusta las credenciales de conexión en tu archivo de configuración (`application.properties`).
 
 3. **Ejecuta el backend:**
-   - Desde tu IDE o con:
+   - Desde tu IntelliJ IDEA o con:
      ```bash
      ./mvnw spring-boot:run
      ```
